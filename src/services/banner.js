@@ -1,6 +1,4 @@
-/** @format */
-
-import { db, serverTimestamp } from "../config/firebase";
+import { db } from "../config/firebase";
 
 export const getAllBanners = async () => {
   try {
@@ -13,44 +11,9 @@ export const getAllBanners = async () => {
   }
 };
 
-export const getBannerById = async (bannerId) => {
-  try {
-    const response = await db.collection("web-banners").doc(bannerId).get();
-    const data = response.data();
-    return data;
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const updateBanner = async (bannerId, banner) => {
-  try {
-    await db
-      .collection("web-banners")
-      .doc(bannerId)
-      .update({ banner, updatedAt: serverTimestamp() });
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
-export const deleteBanner = async (bannerId) => {
-  try {
-    await db.collection("web-banners").doc(bannerId).delete();
-  } catch (error) {
-    console.log(error.message);
-    throw error;
-  }
-};
-
 export const addBanner = async (banner) => {
   try {
-    await db
-      .collection("web-banners")
-      .doc(banner.id)
-      .set({ banner, createdAt: serverTimestamp() });
+    await db.collection("web-banners").doc(banner.id).set(banner);
   } catch (error) {
     console.log(error.message);
     throw error;

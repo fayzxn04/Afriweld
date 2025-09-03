@@ -1,6 +1,6 @@
 import { Button, Flex, Modal, Text, Group, Space } from "@mantine/core";
 import PropTypes from "prop-types";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   ArrowLeft,
   PlusSquare,
@@ -8,30 +8,22 @@ import {
   Trash2,
   Upload,
 } from "react-feather";
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { companyColor } from "../../utils/utilConst";
 
-const FormFooter = ({
-  data,
-  resetHandler,
-  addHandler,
-  loading,
-  deleteHandler,
-  updateHandler,
-  page,
-}) => {
-  const { user } = useSelector((state) => state.app);
+const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
+  //   const { user } = useSelector((state) => state.app);
   const navigate = useNavigate();
-  const [showDeleteBtn, setShowDeleteBtn] = useState(true);
+  //   const [showDeleteBtn, setShowDeleteBtn] = useState(true);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
 
-  useEffect(() => {
-    if (user?.role === "staff") {
-      setShowDeleteBtn(false);
-    }
-  }, [user, data]);
+  //   useEffect(() => {
+  //     if (user?.role === "staff") {
+  //       setShowDeleteBtn(false);
+  //     }
+  //   }, [user, data]);
   return (
     <Flex
       justify="space-between"
@@ -66,7 +58,7 @@ const FormFooter = ({
               : () => setShowModalDelete(true)
           }
           loading={data[1].includes("Add") ? "" : loading.delete}
-          disabled={!data[1].includes("Add") && !showDeleteBtn}
+          //   disabled={!data[1].includes("Add") && !showDeleteBtn}
         >
           {data[1].includes("Add") ? `Reset ${page}` : `Delete ${page}`}
         </Button>
@@ -102,7 +94,7 @@ const FormFooter = ({
           >
             Back
           </Button>
-          <Button
+          {/* <Button
             color="red"
             onClick={() => {
               deleteHandler();
@@ -110,7 +102,7 @@ const FormFooter = ({
             }}
           >
             Delete
-          </Button>
+          </Button> */}
         </Group>
       </Modal>
       <Modal opened={showModalUpdate} onClose={() => setShowModalUpdate(false)}>
@@ -124,7 +116,7 @@ const FormFooter = ({
           >
             Back
           </Button>
-          <Button
+          {/* <Button
             color={companyColor}
             onClick={() => {
               updateHandler();
@@ -132,7 +124,7 @@ const FormFooter = ({
             }}
           >
             Update
-          </Button>
+          </Button> */}
         </Group>
       </Modal>
     </Flex>
@@ -146,7 +138,7 @@ FormFooter.propTypes = {
   resetHandler: PropTypes.func,
   addHandler: PropTypes.func,
   loading: PropTypes.object,
-  deleteHandler: PropTypes.func,
-  updateHandler: PropTypes.func,
+  //   deleteHandler: PropTypes.func,
+  //   updateHandler: PropTypes.func,
   page: PropTypes.string,
 };
