@@ -1,12 +1,16 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import { addFile, processPathSegments } from "../../utils/utilFunction";
+import {
+  addFile,
+  deleteFile,
+  processPathSegments,
+} from "../../utils/utilFunction";
 import FormHeader from "../common/FormHeader";
 import FormFooter from "../common/FormFooter";
 import FileUpload from "../common/FileUpload";
 import { toast } from "react-toastify";
-import { addBanner } from "../../services/banner";
+import { addBanner, deleteBanner, updateBanner } from "../../services/banner";
 import { SimpleGrid, Stack, TextInput } from "@mantine/core";
 
 function BannerForm({ data }) {
@@ -68,6 +72,50 @@ function BannerForm({ data }) {
     }
   };
 
+  const deleteHandler = async () => {
+    setLoading({ ...loading, delete: true });
+    try {
+      await deleteBanner(id);
+      await deleteFile("image", `banners/${id}`);
+      navigate("/banners", { replace: true });
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    } finally {
+      setLoading({ ...loading, delete: false });
+    }
+  };
+
+  // Edit handler
+  const editHandler = async () => {
+    setLoading({ ...loading, edit: true });
+
+    try {
+      // If no new file is uploaded, keep the old URL
+      const BannerImage =
+        typeof formData.imageUrl === "string"
+          ? formData.imageUrl
+          : await addFile(formData.imageUrl, "image", `banners/${id}`);
+
+      let payload = {
+        title: formData.title,
+        imageUrl: BannerImage,
+        updatedAt: new Date(), // ✅ track updates
+      };
+
+      // Call your update service
+      await updateBanner(id, payload);
+
+      navigate("/banners", { replace: true });
+      toast.success("Banner updated successfully!");
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong while updating");
+    } finally {
+      setLoading({ ...loading, edit: false });
+    }
+  };
+
   return (
     <Stack>
       <FormHeader data={headerFromPath} />
@@ -90,7 +138,7 @@ function BannerForm({ data }) {
             }}
             setModalImage={() => {}}
             setOpenModal={() => {}}
-            // name="imageUrl"
+            name="imageUrl"
             mediaType="Image"
             imageLoading={loading.add}
             multiple={false}
@@ -98,7 +146,9 @@ function BannerForm({ data }) {
         </SimpleGrid>
         <FormFooter
           addHandler={addHandler}
+          updateHandler={editHandler}
           resetHandler={resetHandler}
+          deleteHandler={deleteHandler}
           loading={loading}
           page={"Banner"}
           data={headerFromPath}

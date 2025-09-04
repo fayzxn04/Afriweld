@@ -38,9 +38,10 @@ export const addFile = async (file, fileName, filePath) => {
   }
 };
 
+// This function takes a Firebase Storage download URL and extracts the file’s storage path from it.
 function convertFirebaseUrlToPath(firebaseUrl) {
   try {
-    // Decode the URL
+    // Decode the URL   [ %2F = / ]
     const decodedUrl = decodeURIComponent(firebaseUrl);
 
     // Extract the path between 'o/' and '?'
@@ -56,6 +57,7 @@ function convertFirebaseUrlToPath(firebaseUrl) {
   }
 }
 
+// This Function is used for deleting files from Firebase Storage!
 export const deleteFile = async (fileName, filePath) => {
   const storageRef = storage.ref();
   let fileRef;

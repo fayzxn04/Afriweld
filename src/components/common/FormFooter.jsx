@@ -12,8 +12,17 @@ import {
 import { useNavigate } from "react-router-dom";
 import { companyColor } from "../../utils/utilConst";
 
-const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
+const FormFooter = ({
+  data,
+  resetHandler,
+  deleteHandler,
+  updateHandler,
+  addHandler,
+  loading,
+  page,
+}) => {
   const navigate = useNavigate();
+  const [showDeleteBtn, setShowDeleteBtn] = useState(true);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
 
@@ -52,6 +61,7 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
               : () => setShowModalDelete(true)
           }
           loading={data[1].includes("Add") ? "" : loading.delete}
+          disabled={!data[1].includes("Add") && !showDeleteBtn}
         >
           {data[1].includes("Add") ? `Reset ${page}` : `Delete ${page}`}
         </Button>
@@ -89,6 +99,15 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
           >
             Back
           </Button>
+          <Button
+            color="red"
+            onClick={() => {
+              deleteHandler();
+              setShowModalDelete(false);
+            }}
+          >
+            Delete
+          </Button>
         </Group>
       </Modal>
 
@@ -102,6 +121,15 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
             onClick={() => setShowModalUpdate(false)}
           >
             Back
+          </Button>
+          <Button
+            color={companyColor}
+            onClick={() => {
+              updateHandler();
+              setShowModalUpdate(false);
+            }}
+          >
+            Update
           </Button>
         </Group>
       </Modal>
