@@ -8,22 +8,15 @@ import {
   Trash2,
   Upload,
 } from "react-feather";
-// import { useSelector } from "react-redux";
+
 import { useNavigate } from "react-router-dom";
 import { companyColor } from "../../utils/utilConst";
 
 const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
-  //   const { user } = useSelector((state) => state.app);
   const navigate = useNavigate();
-  //   const [showDeleteBtn, setShowDeleteBtn] = useState(true);
   const [showModalDelete, setShowModalDelete] = useState(false);
   const [showModalUpdate, setShowModalUpdate] = useState(false);
 
-  //   useEffect(() => {
-  //     if (user?.role === "staff") {
-  //       setShowDeleteBtn(false);
-  //     }
-  //   }, [user, data]);
   return (
     <Flex
       justify="space-between"
@@ -40,6 +33,7 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
       >
         Go Back
       </Button>
+
       <Flex gap={20}>
         <Button
           color="black"
@@ -58,10 +52,10 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
               : () => setShowModalDelete(true)
           }
           loading={data[1].includes("Add") ? "" : loading.delete}
-          //   disabled={!data[1].includes("Add") && !showDeleteBtn}
         >
           {data[1].includes("Add") ? `Reset ${page}` : `Delete ${page}`}
         </Button>
+
         <Button
           color={companyColor}
           p={16}
@@ -83,6 +77,7 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
           {data[1].includes("Add") ? data[1] : `Update ${page}`}
         </Button>
       </Flex>
+
       <Modal opened={showModalDelete} onClose={() => setShowModalDelete(false)}>
         <Text>Are you sure you want to delete the {page}?</Text>
         <Space h={10} />
@@ -94,17 +89,9 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
           >
             Back
           </Button>
-          {/* <Button
-            color="red"
-            onClick={() => {
-              deleteHandler();
-              setShowModalDelete(false);
-            }}
-          >
-            Delete
-          </Button> */}
         </Group>
       </Modal>
+
       <Modal opened={showModalUpdate} onClose={() => setShowModalUpdate(false)}>
         <Text>Are you sure you want to update the {page}?</Text>
         <Space h={10} />
@@ -116,15 +103,6 @@ const FormFooter = ({ data, resetHandler, addHandler, loading, page }) => {
           >
             Back
           </Button>
-          {/* <Button
-            color={companyColor}
-            onClick={() => {
-              updateHandler();
-              setShowModalUpdate(false);
-            }}
-          >
-            Update
-          </Button> */}
         </Group>
       </Modal>
     </Flex>

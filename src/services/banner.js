@@ -19,3 +19,12 @@ export const addBanner = async (banner) => {
     throw error;
   }
 };
+
+export const deleteBanner = async (bannerId) => {
+  try {
+    await db.collection("web-banners").doc(bannerId).delete();
+  } catch (error) {
+    console.log(error.message);
+    throw error;
+  }
+};

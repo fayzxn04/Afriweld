@@ -37,3 +37,46 @@ export const addFile = async (file, fileName, filePath) => {
     throw error;
   }
 };
+
+function convertFirebaseUrlToPath(firebaseUrl) {
+  try {
+    // Decode the URL
+    const decodedUrl = decodeURIComponent(firebaseUrl);
+
+    // Extract the path between 'o/' and '?'
+    const matches = decodedUrl.match(/o\/(.+?)\?/);
+    if (matches && matches[1]) {
+      // Replace '%2F' with '/' to get the actual path
+      return matches[1].replace(/%2F/g, "/");
+    }
+    throw new Error("Invalid Firebase URL");
+  } catch (error) {
+    console.error("Error converting Firebase URL to path:", error);
+    return null; // or handle the error as you see fit
+  }
+}
+
+export const deleteFile = async (fileName, filePath) => {
+  const storageRef = storage.ref();
+  let fileRef;
+
+  // Check if fileName includes "firebase"
+  if (fileName && fileName.includes("firebase")) {
+    // Convert the fileName to your desired path format here
+    // This is a placeholder, replace with your actual conversion logic
+    const convertedPath = convertFirebaseUrlToPath(fileName);
+    fileRef = storageRef.child(convertedPath);
+  } else if (fileName !== undefined) {
+    fileRef = storageRef.child(`${filePath}/${fileName}`);
+  } else {
+    fileRef = storageRef.child(filePath);
+  }
+
+  try {
+    await fileRef.delete();
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false; // Indicate failure
+  }
+};
