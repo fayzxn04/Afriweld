@@ -64,10 +64,10 @@ function ProductTablePage() {
     const data = filteredProducts.map((product) => ({
       "Product Name": product.name,
       "Image URL": product.imageUrl,
-      // Dimensions: product.dimensions,
+      Dimensions: product.dimensions,
       "Unit Weight": product.unitWeight,
       "Unit Price": product.unitPrice,
-      // Description: product.description,
+      Description: product.description,
       "Wholesale Price": product.wholesalePrice,
       "Special Price": product.specialPrice,
       "Wholesale Qty": product.wholesaleQuantity,

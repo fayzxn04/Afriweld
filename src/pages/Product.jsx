@@ -13,7 +13,7 @@ const Product = () => {
       justify="space-between"
       style={{ height: "calc(100vh - 89px)" }}
     >
-      {location.pathname === "/categories" ? (
+      {location.pathname === "/products" ? (
         <ProductTablePage />
       ) : (
         <ProductForm data={data} />
