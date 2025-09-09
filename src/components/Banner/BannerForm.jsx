@@ -11,13 +11,14 @@ import FormFooter from "../common/FormFooter";
 import FileUpload from "../common/FileUpload";
 import { toast } from "react-toastify";
 import { addBanner, deleteBanner, updateBanner } from "../../services/banner";
-import { SimpleGrid, Stack, TextInput } from "@mantine/core";
+import { SimpleGrid, Stack, Switch, TextInput, Flex } from "@mantine/core";
 
 function BannerForm({ data }) {
   const [id, setId] = useState(v4());
   const [formData, setFormData] = useState({
     title: "",
     imageUrl: "",
+    isActive: true,
   });
   const [loading, setLoading] = useState({
     add: false,
@@ -35,6 +36,7 @@ function BannerForm({ data }) {
       setFormData({
         title: data.title,
         imageUrl: data.imageUrl,
+        isActive: data.isActive ?? true,
       });
     }
   }, [data]);
@@ -43,6 +45,7 @@ function BannerForm({ data }) {
     setFormData({
       title: "",
       imageUrl: "",
+      isActive: true,
     });
   };
 
@@ -59,6 +62,7 @@ function BannerForm({ data }) {
         id,
         title: formData.title,
         imageUrl: BannerImage, // use uploaded URL
+        isActive: formData.isActive,
         createdAt: new Date(),
       };
 
@@ -100,6 +104,7 @@ function BannerForm({ data }) {
       let payload = {
         title: formData.title,
         imageUrl: BannerImage,
+        isActive: formData.isActive,
         updatedAt: new Date(), // ✅ track updates
       };
 
@@ -116,11 +121,18 @@ function BannerForm({ data }) {
     }
   };
 
+  const toggleActive = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      isActive: value,
+    }));
+  };
+
   return (
     <Stack>
       <FormHeader data={headerFromPath} />
       <Stack p={24} justify="space-between" h={"75vh"}>
-        <SimpleGrid cols={3}>
+        <SimpleGrid cols={3} spacing="lg" verticalSpacing="lg">
           <TextInput
             label="Banner Title"
             placeholder="Enter Title"
@@ -129,20 +141,30 @@ function BannerForm({ data }) {
               setFormData({ ...formData, title: event.currentTarget.value })
             }
           />
-
-          <FileUpload
-            file={formData.imageUrl}
-            data={formData.imageUrl}
-            setFile={(file) => {
-              setFormData({ ...formData, imageUrl: file });
-            }}
-            setModalImage={() => {}}
-            setOpenModal={() => {}}
-            name="imageUrl"
-            mediaType="Image"
-            imageLoading={loading.add}
-            multiple={false}
-          />
+          <Stack spacing={4}>
+            <FileUpload
+              file={formData.imageUrl}
+              data={formData.imageUrl}
+              setFile={(file) => {
+                setFormData({ ...formData, imageUrl: file });
+              }}
+              setModalImage={() => {}}
+              setOpenModal={() => {}}
+              name="imageUrl"
+              mediaType="Image"
+              imageLoading={loading.add}
+              multiple={false}
+            />
+          </Stack>
+          <Flex align="center" justify="flex-start" gap="sm">
+            <Switch
+              label="Active"
+              checked={formData.isActive}
+              onChange={(e) => toggleActive(e.currentTarget.checked)}
+              size="md"
+              color="blue"
+            />
+          </Flex>
         </SimpleGrid>
         <FormFooter
           addHandler={addHandler}

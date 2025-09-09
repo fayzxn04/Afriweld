@@ -144,7 +144,7 @@ FormFooter.propTypes = {
   resetHandler: PropTypes.func,
   addHandler: PropTypes.func,
   loading: PropTypes.object,
-  //   deleteHandler: PropTypes.func,
-  //   updateHandler: PropTypes.func,
+  deleteHandler: PropTypes.func,
+  updateHandler: PropTypes.func,
   page: PropTypes.string,
 };

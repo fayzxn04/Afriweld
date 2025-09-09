@@ -45,8 +45,8 @@ const router = createBrowserRouter([
         path: "/categories",
         element: <Categories />,
         children: [
-          { path: "addCategories", element: <Categories /> },
-          { path: "editCategories", element: <Categories /> },
+          { path: "addCategory", element: <Categories /> },
+          { path: "editCategory", element: <Categories /> },
         ],
       },
 
