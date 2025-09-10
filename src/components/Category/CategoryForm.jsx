@@ -93,17 +93,54 @@ function CategoryForm({ data }) {
     }
   };
 
+  // const deleteHandler = async () => {
+  //   setLoading({ ...loading, delete: true });
+  //   try {
+  //     await deleteCategory(id);
+  //     await deleteFile("image", `categories/${id}`);
+  //     navigate("/categories", { replace: true });
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Something went wrong");
+  //   } finally {
+  //     setLoading({ ...loading, delete: false });
+  //   }
+  // };
+
   const deleteHandler = async () => {
-    setLoading({ ...loading, delete: true });
+    setLoading((s) => ({ ...s, delete: true }));
     try {
+      // Grab the best reference you have (prefer exact path if you store it)
+      const imageRef =
+        data?.imagePath ||
+        data?.imageUrl ||
+        formData?.imagePath ||
+        formData?.imageUrl;
+
+      // 1) Delete storage object first
+      if (imageRef) {
+        const ok = await deleteFile(imageRef); // this can be URL or "banners/<id>/<file.ext>"
+        if (!ok) {
+          toast.error(
+            "Couldn’t delete banner image from Storage. Database not changed."
+          );
+          setLoading((s) => ({ ...s, delete: false }));
+          return;
+        }
+      } else {
+        console.warn("No imageRef found; skipping storage delete.");
+      }
+
+      // 2) Then delete the Firestore document
       await deleteCategory(id);
-      await deleteFile("image", `categories/${id}`);
+
       navigate("/categories", { replace: true });
+      toast.success("Category deleted.");
     } catch (err) {
       console.log(err);
       toast.error("Something went wrong");
     } finally {
-      setLoading({ ...loading, delete: false });
+      setLoading((s) => ({ ...s, delete: false }));
     }
   };
 

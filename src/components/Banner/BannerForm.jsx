@@ -90,6 +90,43 @@ function BannerForm({ data }) {
     }
   };
 
+  // const deleteHandler = async () => {
+  //   setLoading((s) => ({ ...s, delete: true }));
+  //   try {
+  //     // Grab the best reference you have (prefer exact path if you store it)
+  //     const imageRef =
+  //       data?.imagePath ||
+  //       data?.imageUrl ||
+  //       formData?.imagePath ||
+  //       formData?.imageUrl;
+
+  //     // 1) Delete storage object first
+  //     if (imageRef) {
+  //       const ok = await deleteFile(imageRef); // this can be URL or "banners/<id>/<file.ext>"
+  //       if (!ok) {
+  //         toast.error(
+  //           "Couldn’t delete banner image from Storage. Database not changed."
+  //         );
+  //         setLoading((s) => ({ ...s, delete: false }));
+  //         return;
+  //       }
+  //     } else {
+  //       console.warn("No imageRef found; skipping storage delete.");
+  //     }
+
+  //     // 2) Then delete the Firestore document
+  //     await deleteBanner(id);
+
+  //     navigate("/banners", { replace: true });
+  //     toast.success("Banner deleted.");
+  //   } catch (err) {
+  //     console.log(err);
+  //     toast.error("Something went wrong");
+  //   } finally {
+  //     setLoading((s) => ({ ...s, delete: false }));
+  //   }
+  // };
+
   // Edit handler
   const editHandler = async () => {
     setLoading({ ...loading, edit: true });
