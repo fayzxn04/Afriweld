@@ -1,28 +1,28 @@
 import { AspectRatio, Checkbox, Image, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
-const ProductRow = ({ product, selectProduct, selectedProducts }) => {
+const UserRow = ({ user, selectUser, selectedUsers }) => {
   const {
     id,
     name,
-    description,
-    dimensions,
-    unitWeight,
-    unitPrice,
-    wholesalePrice,
-    specialPrice,
-    wholesaleQuantity,
-    isActive,
-    imageUrl,
-  } = product;
+    email,
+    phoneNumber,
+    // isBusiness,
+    // businessName,
+    // businessType,
+    // vrnNumber,
+    // tinNumber,
+    // defaultAddress,
+  } = user;
 
   const navigate = useNavigate();
+
   const handleRowClick = () => {
-    navigate(`/products/editProduct?id=${id}`, { state: product });
+    navigate(`/users/editUser?id=${id}`, { state: user });
   };
 
   const handleCheckboxChange = (e) => {
-    selectProduct(e, product);
+    selectUser(e, user);
   };
 
   return (
@@ -30,21 +30,16 @@ const ProductRow = ({ product, selectProduct, selectedProducts }) => {
       <Table.Td>
         <div onClick={(e) => e.stopPropagation()}>
           <Checkbox
-            checked={selectedProducts.includes(product)}
+            checked={selectedUsers.includes(user)}
             onChange={handleCheckboxChange}
           />
         </div>
       </Table.Td>
       <Table.Td>{name}</Table.Td>
-      <Table.Td>{description}</Table.Td>
-      <Table.Td>{dimensions}</Table.Td>
-      <Table.Td>{unitWeight}</Table.Td>
-      <Table.Td>{unitPrice}</Table.Td>
-      <Table.Td>{wholesalePrice}</Table.Td>
-      <Table.Td>{specialPrice}</Table.Td>
-      <Table.Td>{wholesaleQuantity}</Table.Td>
-      <Table.Td>{isActive ? "Yes" : "No"}</Table.Td>
-      <Table.Td>
+      <Table.Td>{email}</Table.Td>
+      <Table.Td>{phoneNumber}</Table.Td>
+
+      {/* <Table.Td>
         <AspectRatio ratio={1} style={{ width: "60px" }}>
           <Image
             src={imageUrl}
@@ -53,9 +48,9 @@ const ProductRow = ({ product, selectProduct, selectedProducts }) => {
             withPlaceholder
           />
         </AspectRatio>
-      </Table.Td>
+      </Table.Td> */}
     </Table.Tr>
   );
 };
 
-export default ProductRow;
+export default UserRow;

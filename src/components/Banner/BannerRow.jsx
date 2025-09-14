@@ -1,12 +1,10 @@
 import { AspectRatio, Checkbox, Image, Table } from "@mantine/core";
-import React from "react";
 import { useNavigate } from "react-router-dom";
 
 const BannerRow = ({ banner, selectBanner, selectedBanners }) => {
   const { title, imageUrl } = banner;
 
   const navigate = useNavigate();
-
   const handleRowClick = () => {
     navigate(`/banners/editBanner?id=${banner.id}`, { state: banner });
   };

@@ -117,18 +117,38 @@ function CategoryForm({ data }) {
         formData?.imagePath ||
         formData?.imageUrl;
 
+      const bannerRef =
+        data?.bannerImagePath ||
+        data?.bannerImageUrl ||
+        formData?.bannerImagePath ||
+        formData?.bannerImageUrl ||
+        null;
+
       // 1) Delete storage object first
-      if (imageRef) {
-        const ok = await deleteFile(imageRef); // this can be URL or "banners/<id>/<file.ext>"
-        if (!ok) {
-          toast.error(
-            "Couldn’t delete banner image from Storage. Database not changed."
-          );
-          setLoading((s) => ({ ...s, delete: false }));
-          return;
-        }
-      } else {
-        console.warn("No imageRef found; skipping storage delete.");
+      // if (imageRef) {
+      //   const ok = await deleteFile(imageRef); // this can be URL or "banners/<id>/<file.ext>"
+      //   if (!ok) {
+      //     toast.error(
+      //       "Couldn’t delete banner image from Storage. Database not changed."
+      //     );
+      //     setLoading((s) => ({ ...s, delete: false }));
+      //     return;
+      //   }
+      // } else {
+      //   console.warn("No imageRef found; skipping storage delete.");
+      // }
+
+      const [imgOk, bannerOk] = await Promise.all([
+        imageRef ? deleteFile(imageRef) : Promise.resolve(true),
+        bannerRef ? deleteFile(bannerRef) : Promise.resolve(true),
+      ]);
+
+      if (!imgOk || !bannerOk) {
+        toast.error(
+          "Couldn’t delete one or more images from Storage. Database not changed."
+        );
+        setLoading((s) => ({ ...s, delete: false }));
+        return;
       }
 
       // 2) Then delete the Firestore document

@@ -49,21 +49,21 @@ const FormFooter = ({
           p={16}
           h={52}
           leftSection={
-            data[1].includes("Add") ? (
+            data[1].startsWith("Add") ? (
               <RefreshCcw size={16} />
             ) : (
               <Trash2 size={16} />
             )
           }
           onClick={
-            data[1].includes("Add")
+            data[1].startsWith("Add")
               ? resetHandler
               : () => setShowModalDelete(true)
           }
-          loading={data[1].includes("Add") ? "" : loading.delete}
-          disabled={!data[1].includes("Add") && !showDeleteBtn}
+          loading={data[1].startsWith("Add") ? "" : loading.delete}
+          disabled={!data[1].startsWith("Add") && !showDeleteBtn}
         >
-          {data[1].includes("Add") ? `Reset ${page}` : `Delete ${page}`}
+          {data[1].startsWith("Add") ? `Reset ${page}` : `Delete ${page}`}
         </Button>
 
         <Button
@@ -71,20 +71,20 @@ const FormFooter = ({
           p={16}
           h={52}
           leftSection={
-            data[1].includes("Add") ? (
+            data[1].startsWith("Add") ? (
               <PlusSquare size={16} />
             ) : (
               <Upload size={16} />
             )
           }
           onClick={
-            data[1].includes("Add")
+            data[1].startsWith("Add")
               ? addHandler
               : () => setShowModalUpdate(true)
           }
-          loading={data[1].includes("Add") ? loading.add : loading.edit}
+          loading={data[1].startsWith("Add") ? loading.add : loading.edit}
         >
-          {data[1].includes("Add") ? data[1] : `Update ${page}`}
+          {data[1].startsWith("Add") ? data[1] : `Update ${page}`}
         </Button>
       </Flex>
 

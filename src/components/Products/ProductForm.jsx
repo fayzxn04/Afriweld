@@ -15,7 +15,15 @@ import {
   deleteProduct,
   updateProduct,
 } from "../../services/product";
-import { SimpleGrid, Stack, Switch, TextInput, Flex } from "@mantine/core";
+import {
+  SimpleGrid,
+  Stack,
+  Switch,
+  TextInput,
+  Flex,
+  Select,
+} from "@mantine/core";
+import { useSelector } from "react-redux";
 
 function ProductForm({ data }) {
   const [id, setId] = useState(v4());
@@ -29,13 +37,16 @@ function ProductForm({ data }) {
     specialPrice: 0,
     wholesaleQuantity: 0,
     isActive: true,
-    imageUrl: "",
+    imageUrl: [],
+    categoryID: "",
   });
+  const [categoryID, setCategoryID] = useState("");
   const [loading, setLoading] = useState({
     add: false,
     edit: false,
     delete: false,
   });
+  const { categories } = useSelector((state) => state.category);
   const navigate = useNavigate();
   const location = useLocation();
   const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -56,6 +67,7 @@ function ProductForm({ data }) {
         isActive: data.isActive,
         imageUrl: data.imageUrl,
       });
+      setCategoryID(data.categoryID || "");
     }
   }, [data]);
 
@@ -70,16 +82,23 @@ function ProductForm({ data }) {
       specialPrice: "",
       wholesaleQuantity: "",
       isActive: true,
-      imageUrl: "",
+      imageUrl: [],
     });
+    setCategoryID(""); // Reset category
   };
 
   const addHandler = async () => {
     setLoading({ ...loading, add: true });
 
+    if (formData.imageUrl === "") {
+      toast.error("Please upload an image");
+      setLoading((s) => ({ ...s, add: false }));
+      return;
+    }
+
     try {
       const ProductImage = await addFile(
-        formData.imageUrl,
+        [formData.imageUrl],
         "image",
         `products/${id}`
       );
@@ -87,7 +106,7 @@ function ProductForm({ data }) {
       let payload = {
         id,
         name: formData.name,
-        imageUrl: ProductImage, // use uploaded URL
+        imageUrl: Array(ProductImage), // use uploaded URL
         description: formData.description,
         dimensions: formData.dimensions,
         unitWeight: Number(formData.unitWeight),
@@ -96,6 +115,7 @@ function ProductForm({ data }) {
         specialPrice: Number(formData.specialPrice),
         wholesaleQuantity: Number(formData.wholesaleQuantity),
         isActive: formData.isActive,
+        categoryID: categoryID || "",
         createdAt: new Date(),
       };
 
@@ -174,6 +194,18 @@ function ProductForm({ data }) {
       <FormHeader data={headerFromPath} />
       <Stack p={24} justify="space-between" h={"75vh"}>
         <SimpleGrid cols={2} spacing="sm" verticalSpacing="sm">
+          <Select
+            label="Category"
+            placeholder="Select Category"
+            w="70%"
+            data={categories.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }))}
+            value={categoryID}
+            onChange={(value) => setCategoryID(value)}
+          />
+
           {/* Product Name */}
           <TextInput
             label="Product Name"
@@ -182,6 +214,17 @@ function ProductForm({ data }) {
             value={formData.name}
             onChange={(e) =>
               setFormData({ ...formData, name: e.currentTarget.value })
+            }
+          />
+
+          {/* Description */}
+          <TextInput
+            label="Description"
+            placeholder="Enter Description"
+            w="70%"
+            value={formData.description}
+            onChange={(e) =>
+              setFormData({ ...formData, description: e.currentTarget.value })
             }
           />
 
@@ -199,17 +242,6 @@ function ProductForm({ data }) {
             mediaType="Image"
             imageLoading={loading.add}
             multiple={false}
-          />
-
-          {/* Description */}
-          <TextInput
-            label="Description"
-            placeholder="Enter Description"
-            w="70%"
-            value={formData.description}
-            onChange={(e) =>
-              setFormData({ ...formData, description: e.currentTarget.value })
-            }
           />
 
           {/* Dimensions */}

@@ -15,7 +15,6 @@ const AddressRow = ({ address, selectAddress, selectedAddresses }) => {
   } = address;
 
   const navigate = useNavigate();
-
   const handleRowClick = () => {
     navigate(`/address/editAddress?id=${id}`, { state: address });
   };
@@ -42,17 +41,6 @@ const AddressRow = ({ address, selectAddress, selectedAddresses }) => {
       <Table.Td>{latitude}</Table.Td>
       <Table.Td>{longitude}</Table.Td>
       <Table.Td>{phoneNumber}</Table.Td>
-
-      {/* <Table.Td>
-        <AspectRatio ratio={1} style={{ width: "60px" }}>
-          <Image
-            src={imageUrl}
-            alt={name}
-            sx={{ objectFit: "cover" }}
-            withPlaceholder
-          />
-        </AspectRatio>
-      </Table.Td> */}
     </Table.Tr>
   );
 };

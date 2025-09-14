@@ -2,29 +2,29 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import HeaderExport from "../common/HeaderExport";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { deleteAddress, getAllAddresses } from "../../services/address";
-import { setAddresses } from "../../redux/reducers/addressReducer";
+import { deleteCoupon, getAllCoupons } from "../../services/coupon";
+import { setCoupons } from "../../redux/reducers/couponReducer";
 import { Stack } from "@mantine/core";
-import AddressTable from "./AddressTable";
+import CouponTable from "./CouponTable";
 import LoaderIndicator from "../common/LoaderIndicator";
 
-function AddressTablePage() {
+function CouponTablePage() {
   const [showModal, setShowModal] = useState(false);
-  const [selectedAddresses, setSelectedAddresses] = useState([]);
+  const [selectedCoupons, setSelectedCoupons] = useState([]);
   const [filters, setFilters] = useState({
     title: "All",
   });
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const { addresses, loading } = useSelector((state) => state.address);
+  const { coupons, loading } = useSelector((state) => state.coupon);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const deleteSelectedAddresses = async () => {
+  const deleteSelectedCoupons = async () => {
     setLoadingDelete(true);
     try {
       await Promise.all(
-        selectedAddresses.map(async (address) => {
-          await deleteAddress(address.id);
+        selectedCoupons.map(async (coupon) => {
+          await deleteCoupon(coupon.id);
           //   await deleteFile("image", `addresses/${address.id}`);
         })
       );
@@ -36,18 +36,18 @@ function AddressTablePage() {
     }
   };
 
-  const fetchAddress = useCallback(async () => {
-    const data = await getAllAddresses();
-    dispatch(setAddresses(data));
+  const fetchCoupons = useCallback(async () => {
+    const data = await getAllCoupons();
+    dispatch(setCoupons(data));
   }, [dispatch]);
 
   useEffect(() => {
-    fetchAddress();
+    fetchCoupons();
   }, []);
 
-  // Filter addresses
-  const filteredAddresses = useMemo(() => {
-    let filterData = addresses;
+  // Filter coupons
+  const filteredCoupons = useMemo(() => {
+    let filterData = coupons;
 
     if (filters.title !== "All") {
       filterData = filterData.filter(
@@ -56,44 +56,42 @@ function AddressTablePage() {
     }
 
     return filterData;
-  }, [addresses, filters]);
+  }, [coupons, filters]);
 
   // Prepare export data
   const getExportData = useMemo(() => {
-    const data = filteredAddresses.map((address) => ({
-      name: address.name,
-      address1: address.address1,
-      address2: address.address2,
-      city: address.city,
-      district: address.district,
-      latitude: address.latitude,
-      longitude: address.longitude,
-      phoneNumber: address.phoneNumber,
+    const data = filteredCoupons.map((coupon) => ({
+      couponCode: coupon.couponCode,
+      description: coupon.description,
+      percentage: coupon.percentage,
+      maxAmount: coupon.maxAmount,
+      isActive: coupon.isActive,
+      userIDs: coupon.userIDs,
     }));
     return data;
-  }, [filteredAddresses]);
+  }, [filteredCoupons]);
 
   return (
     <Stack gap={0}>
       <HeaderExport
         data={getExportData}
-        page={"Address"}
-        link={"/address/addAddress"}
+        page={"Coupons"}
+        link={"/coupons/addCoupon"}
         setShowModal={setShowModal}
-        showDeleteBtn={selectedAddresses.length > 0}
+        showDeleteBtn={selectedCoupons.length > 0}
         hasButtonAccess={true}
       />
       {loading ? (
         <LoaderIndicator />
       ) : (
-        <AddressTable
-          addresses={filteredAddresses}
+        <CouponTable
+          coupons={filteredCoupons}
           filters={filters}
           showModal={showModal}
           setShowModal={setShowModal}
-          selectedAddresses={selectedAddresses}
-          setSelectedAddresses={setSelectedAddresses}
-          deleteSelectedAddresses={deleteSelectedAddresses}
+          selectedCoupons={selectedCoupons}
+          setSelectedCoupons={setSelectedCoupons}
+          deleteSelectedCoupons={deleteSelectedCoupons}
           loadingDelete={loadingDelete}
         />
       )}
@@ -101,4 +99,4 @@ function AddressTablePage() {
   );
 }
 
-export default AddressTablePage;
+export default CouponTablePage;

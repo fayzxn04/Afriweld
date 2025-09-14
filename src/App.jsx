@@ -25,9 +25,47 @@ import {
 } from "react-feather";
 import { companyColor } from "./utils/utilConst";
 import Logo from "/logoBlack.png";
+import { useDispatch } from "react-redux";
+import { setProducts } from "./redux/reducers/productReducer";
+import { getAllProducts } from "./services/product";
+import { setCategories } from "./redux/reducers/categoryReducer";
+import { getAllCategories } from "./services/category";
+import { setAddresses } from "./redux/reducers/addressReducer";
+import { getAllAddresses } from "./services/address";
+import { setUsers } from "./redux/reducers/userReducer";
+import { getAllUsers } from "./services/user";
+import { useEffect } from "react";
 
 const App = () => {
   const location = useLocation();
+  const dispatch = useDispatch();
+
+  const fetchProducts = async () => {
+    const data = await getAllProducts();
+    dispatch(setProducts(data));
+  };
+
+  const fetchCategories = async () => {
+    const data = await getAllCategories();
+    dispatch(setCategories(data));
+  };
+
+  const fetchAddresses = async () => {
+    const data = await getAllAddresses();
+    dispatch(setAddresses(data));
+  };
+
+  const fetchUsers = async () => {
+    const data = await getAllUsers();
+    dispatch(setUsers(data));
+  };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+    fetchAddresses();
+    fetchUsers();
+  }, []);
 
   return (
     <div className="appWrapper">

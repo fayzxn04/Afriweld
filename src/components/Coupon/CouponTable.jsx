@@ -1,74 +1,76 @@
 import React, { useEffect } from "react";
 import { ITEMS_PER_PAGE } from "../../utils/utilConst";
-import { Checkbox, Pagination, Paper, Table } from "@mantine/core";
-import BannerRow from "./BannerRow";
+import { Checkbox, Pagination, Paper, Table, Flex } from "@mantine/core";
+import CouponRow from "./CouponRow";
 import NoResult from "../common/NoResult";
 import ConfirmationModal from "../common/ConfirmationModal";
 import { usePagination } from "../../hooks/usePagination";
 
-const BannerTable = ({
-  banners,
+const CouponTable = ({
+  coupons,
   filters,
   showModal,
   setShowModal,
-  selectedBanners,
-  setSelectedBanners,
-  deleteSelectedBanners,
+  selectedCoupons,
+  setSelectedCoupons,
+  deleteSelectedCoupons,
   loadingDelete,
 }) => {
   const { currentPage, handlePageChange, paginatedItems, totalPages } =
-    usePagination(banners, ITEMS_PER_PAGE);
+    usePagination(coupons, ITEMS_PER_PAGE);
 
   useEffect(() => {
     handlePageChange(1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filters]);
 
-  const selectBanner = (e, banner) => {
+  const selectCoupon = (e, coupon) => {
     if (e.target.checked) {
-      setSelectedBanners((prevState) => [...prevState, banner]);
+      setSelectedCoupons((prev) => [...prev, coupon]);
     } else {
-      setSelectedBanners((prevState) =>
-        prevState.filter((selectedBanner) => selectedBanner.id !== banner.id)
+      setSelectedCoupons((prev) =>
+        prev.filter((selectedCoupon) => selectedCoupon.id !== coupon.id)
       );
     }
   };
 
   const onSelectAll = (e) => {
     if (e.target.checked) {
-      setSelectedBanners(paginatedItems);
+      setSelectedCoupons(paginatedItems);
     } else {
-      setSelectedBanners([]);
+      setSelectedCoupons([]);
     }
   };
 
   return (
     <>
       <Paper>
-        <Table>
+        <Table highlightOnHover>
           <Table.Thead>
             <Table.Tr>
               <Table.Th>
                 <Checkbox
                   checked={
-                    selectedBanners.length > 0 &&
-                    paginatedItems.length === selectedBanners.length
+                    selectedCoupons.length > 0 &&
+                    paginatedItems.length === selectedCoupons.length
                   }
-                  onChange={(e) => onSelectAll(e)}
+                  onChange={onSelectAll}
                 />
               </Table.Th>
-              <Table.Th>Banner Title</Table.Th>
-              <Table.Th>Image</Table.Th>
+              <Table.Th> Code</Table.Th>
+              <Table.Th> Description</Table.Th>
+              <Table.Th> Percentage</Table.Th>
+              <Table.Th> Max Amount</Table.Th>
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>
             {paginatedItems.length > 0 ? (
-              paginatedItems.map((banner) => (
-                <BannerRow
-                  key={banner.id}
-                  banner={banner}
-                  selectBanner={selectBanner}
-                  selectedBanners={selectedBanners}
+              paginatedItems.map((coupon) => (
+                <CouponRow
+                  key={coupon.id}
+                  coupon={coupon}
+                  selectCoupon={selectCoupon}
+                  selectedCoupons={selectedCoupons}
                 />
               ))
             ) : (
@@ -78,7 +80,7 @@ const BannerTable = ({
         </Table>
       </Paper>
 
-      {banners?.length > ITEMS_PER_PAGE && (
+      {coupons.length > ITEMS_PER_PAGE && (
         <Flex mt={20} justify="center" align="center">
           <Pagination
             total={totalPages}
@@ -87,21 +89,22 @@ const BannerTable = ({
           />
         </Flex>
       )}
+
       <ConfirmationModal
         showModal={showModal}
         setShowModal={setShowModal}
         loading={loadingDelete}
         onConfirm={() => {
-          if (selectedBanners.length > 0) {
-            deleteSelectedBanners();
+          if (selectedCoupons.length > 0) {
+            deleteSelectedCoupons();
           }
         }}
         confirmText="Delete"
       >
-        Are you sure you want to delete Selected Banner?
+        Are you sure you want to delete Selected Coupons?
       </ConfirmationModal>
     </>
   );
 };
 
-export default BannerTable;
+export default CouponTable;

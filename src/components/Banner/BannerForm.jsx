@@ -11,7 +11,15 @@ import FormFooter from "../common/FormFooter";
 import FileUpload from "../common/FileUpload";
 import { toast } from "react-toastify";
 import { addBanner, deleteBanner, updateBanner } from "../../services/banner";
-import { SimpleGrid, Stack, Switch, TextInput, Flex } from "@mantine/core";
+import {
+  SimpleGrid,
+  Stack,
+  Switch,
+  TextInput,
+  Flex,
+  Select,
+} from "@mantine/core";
+import { useSelector } from "react-redux";
 
 function BannerForm({ data }) {
   const [id, setId] = useState(v4());
@@ -20,11 +28,13 @@ function BannerForm({ data }) {
     imageUrl: "",
     isActive: true,
   });
+  const [productID, setProductID] = useState("");
   const [loading, setLoading] = useState({
     add: false,
     edit: false,
     delete: false,
   });
+  const { products } = useSelector((state) => state.product);
   const navigate = useNavigate();
   const location = useLocation();
   const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -38,6 +48,8 @@ function BannerForm({ data }) {
         imageUrl: data.imageUrl,
         isActive: data.isActive ?? true,
       });
+      //
+      setProductID(data.productID || "");
     }
   }, [data]);
 
@@ -47,10 +59,18 @@ function BannerForm({ data }) {
       imageUrl: "",
       isActive: true,
     });
+    //
+    setProductID(""); // Reset product
   };
 
   const addHandler = async () => {
     setLoading({ ...loading, add: true });
+
+    if (formData.imageUrl === "") {
+      toast.error("Please upload an image");
+      setLoading((s) => ({ ...s, add: false }));
+      return;
+    }
 
     try {
       const BannerImage = await addFile(
@@ -63,6 +83,7 @@ function BannerForm({ data }) {
         title: formData.title,
         imageUrl: BannerImage, // use uploaded URL
         isActive: formData.isActive,
+        productID: productID || "",
         createdAt: new Date(),
       };
 
@@ -89,43 +110,6 @@ function BannerForm({ data }) {
       setLoading({ ...loading, delete: false });
     }
   };
-
-  // const deleteHandler = async () => {
-  //   setLoading((s) => ({ ...s, delete: true }));
-  //   try {
-  //     // Grab the best reference you have (prefer exact path if you store it)
-  //     const imageRef =
-  //       data?.imagePath ||
-  //       data?.imageUrl ||
-  //       formData?.imagePath ||
-  //       formData?.imageUrl;
-
-  //     // 1) Delete storage object first
-  //     if (imageRef) {
-  //       const ok = await deleteFile(imageRef); // this can be URL or "banners/<id>/<file.ext>"
-  //       if (!ok) {
-  //         toast.error(
-  //           "Couldn’t delete banner image from Storage. Database not changed."
-  //         );
-  //         setLoading((s) => ({ ...s, delete: false }));
-  //         return;
-  //       }
-  //     } else {
-  //       console.warn("No imageRef found; skipping storage delete.");
-  //     }
-
-  //     // 2) Then delete the Firestore document
-  //     await deleteBanner(id);
-
-  //     navigate("/banners", { replace: true });
-  //     toast.success("Banner deleted.");
-  //   } catch (err) {
-  //     console.log(err);
-  //     toast.error("Something went wrong");
-  //   } finally {
-  //     setLoading((s) => ({ ...s, delete: false }));
-  //   }
-  // };
 
   // Edit handler
   const editHandler = async () => {
@@ -169,30 +153,44 @@ function BannerForm({ data }) {
     <Stack>
       <FormHeader data={headerFromPath} />
       <Stack p={24} justify="space-between" h={"75vh"}>
-        <SimpleGrid cols={3} spacing="lg" verticalSpacing="lg">
+        <SimpleGrid cols={2} spacing="lg" verticalSpacing="lg">
           <TextInput
             label="Banner Title"
             placeholder="Enter Title"
+            w={"70%"}
             value={formData.title}
             onChange={(event) =>
               setFormData({ ...formData, title: event.currentTarget.value })
             }
           />
-          <Stack spacing={4}>
-            <FileUpload
-              file={formData.imageUrl}
-              data={formData.imageUrl}
-              setFile={(file) => {
-                setFormData({ ...formData, imageUrl: file });
-              }}
-              setModalImage={() => {}}
-              setOpenModal={() => {}}
-              name="imageUrl"
-              mediaType="Image"
-              imageLoading={loading.add}
-              multiple={false}
-            />
-          </Stack>
+
+          <FileUpload
+            file={formData.imageUrl}
+            data={formData.imageUrl}
+            w={"70%"}
+            setFile={(file) => {
+              setFormData({ ...formData, imageUrl: file });
+            }}
+            setModalImage={() => {}}
+            setOpenModal={() => {}}
+            name="imageUrl"
+            mediaType="Image"
+            imageLoading={loading.add}
+            multiple={false}
+          />
+
+          <Select
+            label="Product"
+            placeholder="Select Product"
+            w="70%"
+            data={products.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }))}
+            value={productID}
+            onChange={(value) => setProductID(value)}
+          />
+
           <Flex align="center" justify="flex-start" gap="sm">
             <Switch
               label="Active"
@@ -203,16 +201,17 @@ function BannerForm({ data }) {
             />
           </Flex>
         </SimpleGrid>
-        <FormFooter
-          addHandler={addHandler}
-          updateHandler={editHandler}
-          resetHandler={resetHandler}
-          deleteHandler={deleteHandler}
-          loading={loading}
-          page={"Banner"}
-          data={headerFromPath}
-        />
       </Stack>
+
+      <FormFooter
+        addHandler={addHandler}
+        updateHandler={editHandler}
+        resetHandler={resetHandler}
+        deleteHandler={deleteHandler}
+        loading={loading}
+        page={"Banner"}
+        data={headerFromPath}
+      />
     </Stack>
   );
 }

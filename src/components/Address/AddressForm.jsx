@@ -1,21 +1,24 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { v4 } from "uuid";
-import {
-  //   addFile,
-  //   deleteFile,
-  processPathSegments,
-} from "../../utils/utilFunction";
+import { processPathSegments } from "../../utils/utilFunction";
 import FormHeader from "../common/FormHeader";
 import FormFooter from "../common/FormFooter";
-// import FileUpload from "../common/FileUpload";
 import { toast } from "react-toastify";
 import {
   addAddress,
   deleteAddress,
   updateAddress,
 } from "../../services/address";
-import { SimpleGrid, Stack, Switch, TextInput, Flex } from "@mantine/core";
+import {
+  SimpleGrid,
+  Stack,
+  Switch,
+  TextInput,
+  Flex,
+  Select,
+} from "@mantine/core";
+import { useSelector } from "react-redux";
 
 function AddressForm({ data }) {
   const [id, setId] = useState(v4());
@@ -29,12 +32,15 @@ function AddressForm({ data }) {
     latitude: "",
     longitude: "",
     phoneNumber: "",
+    userID: "",
   });
+  const [userID, setUserID] = useState("");
   const [loading, setLoading] = useState({
     add: false,
     edit: false,
     delete: false,
   });
+  const { users } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const location = useLocation();
   const pathSegments = location.pathname.split("/").filter(Boolean);
@@ -54,6 +60,7 @@ function AddressForm({ data }) {
         longitude: data.longitude,
         phoneNumber: data.phoneNumber,
       });
+      setUserID(data.userID || "");
     }
   }, [data]);
 
@@ -69,18 +76,13 @@ function AddressForm({ data }) {
       longitude: "",
       phoneNumber: "",
     });
+    setUserID(""); // Reset userID
   };
 
   const addHandler = async () => {
     setLoading({ ...loading, add: true });
 
     try {
-      //   const ProductImage = await addFile(
-      //     formData.imageUrl,
-      //     "image",
-      //     `products/${id}`
-      //   );
-
       let payload = {
         id,
         name: formData.name,
@@ -91,6 +93,7 @@ function AddressForm({ data }) {
         latitude: Number(formData.latitude),
         longitude: Number(formData.longitude),
         phoneNumber: formData.phoneNumber,
+        userID: userID || "",
       };
 
       await addAddress(payload);
@@ -107,7 +110,6 @@ function AddressForm({ data }) {
     setLoading({ ...loading, delete: true });
     try {
       await deleteAddress(id);
-      //   await deleteFile("image", `addresses/${id}`);
       navigate("/address", { replace: true });
     } catch (err) {
       console.log(err);
@@ -122,14 +124,8 @@ function AddressForm({ data }) {
     setLoading({ ...loading, edit: true });
 
     try {
-      // If no new file is uploaded, keep the old URL
-      //   const ProductImage =
-      //     typeof formData.imageUrl === "string"
-      //       ? formData.imageUrl
-      //       : await addFile(formData.imageUrl, "image", `products/${id}`);
-
       let payload = {
-        // id,
+        id,
         name: formData.name,
         address1: formData.address1,
         address2: formData.address2,
@@ -138,6 +134,7 @@ function AddressForm({ data }) {
         latitude: Number(formData.latitude),
         longitude: Number(formData.longitude),
         phoneNumber: formData.phoneNumber,
+        userID: userID || "",
 
         updatedAt: new Date(), // ✅ track updates
       };
@@ -160,6 +157,17 @@ function AddressForm({ data }) {
       <FormHeader data={headerFromPath} />
       <Stack p={24} justify="space-between" h={"75vh"}>
         <SimpleGrid cols={2} spacing="sm" verticalSpacing="sm">
+          <Select
+            label="User"
+            placeholder="Select User"
+            w="70%"
+            data={users.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }))}
+            value={userID}
+            onChange={(value) => setUserID(value)}
+          />
           {/* Name */}
           <TextInput
             label=" Name"
@@ -168,17 +176,6 @@ function AddressForm({ data }) {
             value={formData.name}
             onChange={(e) =>
               setFormData({ ...formData, name: e.currentTarget.value })
-            }
-          />
-
-          {/* Phone Number */}
-          <TextInput
-            label="Phone Number"
-            placeholder="Enter Phone Number"
-            w="70%"
-            value={formData.phoneNumber}
-            onChange={(e) =>
-              setFormData({ ...formData, phoneNumber: e.currentTarget.value })
             }
           />
 
@@ -245,6 +242,17 @@ function AddressForm({ data }) {
             value={formData.longitude}
             onChange={(e) =>
               setFormData({ ...formData, longitude: e.currentTarget.value })
+            }
+          />
+
+          {/* Phone Number */}
+          <TextInput
+            label="Phone Number"
+            placeholder="Enter Phone Number"
+            w="70%"
+            value={formData.phoneNumber}
+            onChange={(e) =>
+              setFormData({ ...formData, phoneNumber: e.currentTarget.value })
             }
           />
         </SimpleGrid>
