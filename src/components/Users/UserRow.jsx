@@ -1,22 +1,10 @@
-import { AspectRatio, Checkbox, Image, Table } from "@mantine/core";
+import { Checkbox, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
 const UserRow = ({ user, selectUser, selectedUsers }) => {
-  const {
-    id,
-    name,
-    email,
-    phoneNumber,
-    // isBusiness,
-    // businessName,
-    // businessType,
-    // vrnNumber,
-    // tinNumber,
-    // defaultAddress,
-  } = user;
+  const { id, name, email, phoneNumber } = user;
 
   const navigate = useNavigate();
-
   const handleRowClick = () => {
     navigate(`/users/editUser?id=${id}`, { state: user });
   };
@@ -38,17 +26,6 @@ const UserRow = ({ user, selectUser, selectedUsers }) => {
       <Table.Td>{name}</Table.Td>
       <Table.Td>{email}</Table.Td>
       <Table.Td>{phoneNumber}</Table.Td>
-
-      {/* <Table.Td>
-        <AspectRatio ratio={1} style={{ width: "60px" }}>
-          <Image
-            src={imageUrl}
-            alt={name}
-            sx={{ objectFit: "cover" }}
-            withPlaceholder
-          />
-        </AspectRatio>
-      </Table.Td> */}
     </Table.Tr>
   );
 };

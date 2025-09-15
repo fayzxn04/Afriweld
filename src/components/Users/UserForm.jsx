@@ -4,32 +4,30 @@ import { v4 } from "uuid";
 import { processPathSegments } from "../../utils/utilFunction";
 import FormHeader from "../common/FormHeader";
 import FormFooter from "../common/FormFooter";
-
 import { toast } from "react-toastify";
 import { addUser, deleteUser, updateUser } from "../../services/user";
 import {
   SimpleGrid,
   Stack,
-  Switch,
   TextInput,
-  Flex,
   Select,
+  Flex,
+  Switch,
 } from "@mantine/core";
 import { useSelector } from "react-redux";
 
 function UserForm({ data }) {
   const [id, setId] = useState(v4());
-  const [bannerType, setBannerType] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     phoneNumber: "",
     email: "",
-    isBusiness: "",
+    isBusiness: false,
     businessName: "",
     businessType: "",
     vrnNumber: "",
     tinNumber: "",
-    defaultAddress: "",
+    defaultAddressID: "", // New field for default address ID
   });
   const [addressID, setAddressID] = useState("");
   const [loading, setLoading] = useState({
@@ -46,19 +44,17 @@ function UserForm({ data }) {
   useEffect(() => {
     if (data) {
       setId(data.id);
-      setBannerType(data.bannerType);
       setFormData({
         name: data.name,
         phoneNumber: data.phoneNumber,
         email: data.email,
         isBusiness: data.isBusiness,
-        businessName: data.businessName,
-        businessType: data.businessType,
-        vrnNumber: data.vrnNumber,
-        tinNumber: data.tinNumber,
-        defaultAddress: data.defaultAddress,
+        businessName: data.businessName || "",
+        businessType: data.businessType || "",
+        vrnNumber: data.vrnNumber || "",
+        tinNumber: data.tinNumber || "",
       });
-      setAddressID(data.addressID || "");
+      setAddressID(data.defaultAddressID || "");
     }
   }, [data]);
 
@@ -67,12 +63,11 @@ function UserForm({ data }) {
       name: "",
       phoneNumber: "",
       email: "",
-      isBusiness: "",
+      isBusiness: false,
       businessName: "",
       businessType: "",
       vrnNumber: "",
       tinNumber: "",
-      defaultAddress: "",
     });
 
     setAddressID(""); // Reset address ID
@@ -81,17 +76,6 @@ function UserForm({ data }) {
   const addHandler = async () => {
     setLoading({ ...loading, add: true });
 
-    if (formData.imageUrl === "") {
-      toast.error("Please upload an image");
-      setLoading((s) => ({ ...s, add: false }));
-      return;
-    }
-    if (bannerType === "address" && addressID === "") {
-      toast.error("Please select an address for the user");
-      setLoading((s) => ({ ...s, add: false }));
-      return;
-    }
-
     try {
       let payload = {
         id,
@@ -99,15 +83,12 @@ function UserForm({ data }) {
         phoneNumber: formData.phoneNumber,
         email: formData.email,
         isBusiness: formData.isBusiness,
-        businessName: formData.businessName,
-        businessType: formData.businessType,
-        vrnNumber: formData.vrnNumber,
-        tinNumber: formData.tinNumber,
-        // defaultAddress: formData.defaultAddress,
-        // addressID: addressID || "",
-        defaultAddressID: addressID || "",
+        businessName: formData.businessName || "",
+        businessType: formData.businessType || "",
+        vrnNumber: formData.vrnNumber || "",
+        tinNumber: formData.tinNumber || "",
+        defaultAddressID: addressID,
 
-        // defaultAddressID: addressID || "",
         createdAt: new Date(),
       };
 
@@ -125,7 +106,6 @@ function UserForm({ data }) {
     setLoading({ ...loading, delete: true });
     try {
       await deleteUser(id);
-      //   await deleteFile("image", `users/${id}`);
       navigate("/users", { replace: true });
     } catch (err) {
       console.log(err);
@@ -140,24 +120,16 @@ function UserForm({ data }) {
     setLoading({ ...loading, edit: true });
 
     try {
-      // If no new file is uploaded, keep the old URL
-      //   const ProductImage =
-      //     typeof formData.imageUrl === "string"
-      //       ? formData.imageUrl
-      //       : await addFile(formData.imageUrl, "image", `products/${id}`);
-
       let payload = {
         name: formData.name,
         phoneNumber: formData.phoneNumber,
         email: formData.email,
         isBusiness: formData.isBusiness,
-        businessName: formData.businessName,
-        businessType: formData.businessType,
-        vrnNumber: formData.vrnNumber,
-        tinNumber: formData.tinNumber,
-        // defaultAddress: formData.defaultAddress,
-        defaultAddressID: addressID || "",
-        // addressID: addressID || "",
+        businessName: formData.businessName || "",
+        businessType: formData.businessType || "",
+        vrnNumber: formData.vrnNumber || "",
+        tinNumber: formData.tinNumber || "",
+        defaultAddressID: addressID,
 
         lastSeenAt: new Date(), // ✅ track updates
       };
@@ -175,43 +147,31 @@ function UserForm({ data }) {
     }
   };
 
-  //   const toggleActive = (value) => {
-  //     setFormData((prev) => ({
-  //       ...prev,
-  //       isActive: value,
-  //     }));
-  //   };
+  const toggleActive = (value) => {
+    setFormData((prev) => ({
+      ...prev,
+      isBusiness: value,
+    }));
+  };
 
   return (
     <Stack>
       <FormHeader data={headerFromPath} />
       <Stack p={24} justify="space-between" h={"75vh"}>
         <SimpleGrid cols={2} spacing="sm" verticalSpacing="sm">
-          {/* <Select
-            label="Address Type"
-            placeholder="Select Address Type"
-            data={[
-              { label: "Address", value: "address" },
-              // { label: "Category", value: "category" },
-            ]}
-            value={bannerType}
-            onChange={(value) => setBannerType(value)}
-          /> */}
-          {data && (
-            <Select
-              label=" Address"
-              placeholder="Select Address"
-              w="70%"
-              data={addresses.map((item) => ({
-                label: item.name,
-                value: item.id,
-              }))}
-              value={addressID}
-              onChange={(value) => setAddressID(value)}
-            />
-          )}
+          <Select
+            label=" Default Address"
+            placeholder="Select Default Address"
+            w="70%"
+            data={addresses.map((item) => ({
+              label: item.name,
+              value: item.id,
+            }))}
+            value={addressID}
+            onChange={(value) => setAddressID(value)}
+          />
 
-          {/* Product Name */}
+          {/*  Name */}
           <TextInput
             label=" Name"
             placeholder=" Name"
@@ -221,6 +181,7 @@ function UserForm({ data }) {
               setFormData({ ...formData, name: e.currentTarget.value })
             }
           />
+
           {/* Phone Number */}
           <TextInput
             label="Phone Number"
@@ -231,6 +192,7 @@ function UserForm({ data }) {
               setFormData({ ...formData, phoneNumber: e.currentTarget.value })
             }
           />
+
           {/* Email */}
           <TextInput
             label="Email"
@@ -241,17 +203,73 @@ function UserForm({ data }) {
               setFormData({ ...formData, email: e.currentTarget.value })
             }
           />
-          {/* isBusiness */}
-          {/* <TextInput
-            label="isBusiness"
-            placeholder="Enter isBusiness"
-            w="70%"
-            value={formData.isBusiness}
-            onChange={(e) =>
-              setFormData({ ...formData, isBusiness: e.currentTarget.value })
-            }
-          /> */}
+
+          <Flex align="center" justify="flex-start" gap="sm">
+            <Switch
+              label="Active"
+              checked={formData.isActive}
+              onChange={(e) => toggleActive(e.currentTarget.checked)}
+              size="md"
+              color="blue"
+            />
+          </Flex>
         </SimpleGrid>
+
+        {formData.isBusiness && (
+          <Stack p={24} justify="space-between" h={"75vh"}>
+            {/* <Divider label="Optional details (visible when Active)" /> */}
+            <SimpleGrid cols={2} spacing="sm" verticalSpacing="sm">
+              <TextInput
+                label="Business Name "
+                placeholder="Enter business name"
+                w="70%"
+                value={formData.businessName}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    businessName: e.currentTarget.value,
+                  })
+                }
+              />
+              <TextInput
+                label="Business Type "
+                placeholder="EX: Retail, Hospitality"
+                w="70%"
+                value={formData.businessType}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    businessType: e.currentTarget.value,
+                  })
+                }
+              />
+              <TextInput
+                label="VRN Number "
+                placeholder="Enter VRN"
+                w="70%"
+                value={formData.vrnNumber}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    vrnNumber: e.currentTarget.value,
+                  })
+                }
+              />
+              <TextInput
+                label="TIN Number "
+                placeholder="Enter TIN"
+                w="70%"
+                value={formData.tinNumber}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    tinNumber: e.currentTarget.value,
+                  })
+                }
+              />
+            </SimpleGrid>
+          </Stack>
+        )}
 
         {/* Footer */}
         <FormFooter

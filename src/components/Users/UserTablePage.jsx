@@ -3,7 +3,6 @@ import HeaderExport from "../common/HeaderExport";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deleteUser, getAllUsers } from "../../services/user";
-// import { deleteFile } from "../../utils/utilFunction";
 import { setUsers } from "../../redux/reducers/userReducer";
 import { Stack } from "@mantine/core";
 import UserTable from "./UserTable";
@@ -26,7 +25,6 @@ function UserTablePage() {
       await Promise.all(
         selectedUsers.map(async (user) => {
           await deleteUser(user.id);
-          //   await deleteFile("image", `addresses/${address.id}`);
         })
       );
       setLoadingDelete(false);
