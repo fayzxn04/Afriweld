@@ -10,14 +10,7 @@ import {
   deleteAddress,
   updateAddress,
 } from "../../services/address";
-import {
-  SimpleGrid,
-  Stack,
-  Switch,
-  TextInput,
-  Flex,
-  Select,
-} from "@mantine/core";
+import { SimpleGrid, Stack, TextInput, Flex, Select } from "@mantine/core";
 import { useSelector } from "react-redux";
 
 function AddressForm({ data }) {

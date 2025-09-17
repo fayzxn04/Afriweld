@@ -1,9 +1,8 @@
-import axios from "axios";
 import { db } from "../config/firebase";
 
-export const getAllUsers = async () => {
+export const getAllPortalUsers = async () => {
   try {
-    const response = await db.collection("web-users").get();
+    const response = await db.collection("web-portalUsers").get(); //
     const data = response.docs.map((doc) => doc.data());
     return data;
   } catch (error) {
@@ -14,7 +13,7 @@ export const getAllUsers = async () => {
 
 export const getPortalUser = async (userId) => {
   try {
-    const response = await db.collection("web-users").doc(userId).get();
+    const response = await db.collection("web-portalUsers").doc(userId).get();
     const data = response.data();
     return data;
   } catch (error) {
@@ -23,27 +22,27 @@ export const getPortalUser = async (userId) => {
   }
 };
 
-export const addUser = async (user) => {
+export const updatePortalUser = async (userId, user) => {
   try {
-    await db.collection("web-users").doc(user.id).set(user);
+    await db.collection("web-portalUsers").doc(userId).update(user);
   } catch (error) {
     console.log(error.message);
     throw error;
   }
 };
 
-export const deleteUser = async (userId) => {
+export const deletePortalUser = async (userId) => {
   try {
-    await db.collection("web-users").doc(userId).delete();
+    await db.collection("web-portalUsers").doc(userId).delete();
   } catch (error) {
     console.log(error.message);
     throw error;
   }
 };
 
-export const updateUser = async (userId, user) => {
+export const addPortalUser = async (user) => {
   try {
-    await db.collection("web-users").doc(userId).update(user);
+    await db.collection("web-portalUsers").doc(user.id).set(user);
   } catch (error) {
     console.log(error.message);
     throw error;
@@ -53,7 +52,7 @@ export const updateUser = async (userId, user) => {
 export const getPortalUserByEmail = async (email) => {
   try {
     const response = await db
-      .collection("web-users")
+      .collection("web-portalUsers")
       .where("email", "==", email)
       .get();
     const data = response.docs.map((doc) => doc.data());
@@ -64,27 +63,6 @@ export const getPortalUserByEmail = async (email) => {
     }
   } catch (error) {
     console.log(error.message);
-    throw error;
-  }
-};
-
-export const createPortalUser = async (email, password) => {
-  try {
-    const response = await axios.post(
-      "https://createuser-f4d4e4mvyq-uc.a.run.app",
-      {
-        email,
-        password,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error("Error creating user:", error);
     throw error;
   }
 };

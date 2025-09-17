@@ -7,12 +7,13 @@ import { setAddresses } from "../../redux/reducers/addressReducer";
 import { Stack } from "@mantine/core";
 import AddressTable from "./AddressTable";
 import LoaderIndicator from "../common/LoaderIndicator";
+import AddressFilter from "./AddressFilter";
 
 function AddressTablePage() {
   const [showModal, setShowModal] = useState(false);
   const [selectedAddresses, setSelectedAddresses] = useState([]);
   const [filters, setFilters] = useState({
-    title: "All",
+    searchQuery: "",
   });
   const [loadingDelete, setLoadingDelete] = useState(false);
   const { addresses, loading } = useSelector((state) => state.address);
@@ -49,9 +50,9 @@ function AddressTablePage() {
   const filteredAddresses = useMemo(() => {
     let filterData = addresses;
 
-    if (filters.title !== "All") {
-      filterData = filterData.filter(
-        (address) => address.title === filters.title
+    if (filters.searchQuery) {
+      filterData = filterData.filter((add) =>
+        add.name.toLowerCase().includes(filters.searchQuery.toLowerCase())
       );
     }
 
@@ -83,6 +84,7 @@ function AddressTablePage() {
         showDeleteBtn={selectedAddresses.length > 0}
         hasButtonAccess={true}
       />
+      <AddressFilter filters={filters} setFilters={setFilters} />
       {loading ? (
         <LoaderIndicator />
       ) : (

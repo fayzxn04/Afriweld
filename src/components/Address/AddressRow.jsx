@@ -1,4 +1,4 @@
-import { AspectRatio, Checkbox, Image, Table } from "@mantine/core";
+import { Checkbox, Table } from "@mantine/core";
 import { useNavigate } from "react-router-dom";
 
 const AddressRow = ({ address, selectAddress, selectedAddresses }) => {

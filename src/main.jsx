@@ -17,20 +17,46 @@ import Support from "./pages/Support";
 import Settings from "./pages/Settings";
 import { store } from "./redux/store";
 import { Provider } from "react-redux";
+import User from "./components/User";
+import Login from "./pages/Login";
+import ResetPassword from "./pages/Resetpassword";
+import PortalUser from "./pages/PortalUser";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
+      // {
+      //   path: "/user",
+      //   element: <User />,
+      //   children: [
+      //     { path: "login", element: <Login /> },
+      //     { path: "resetPassword", element: <ResetPassword /> },
+      //   ],
+      // },
       {
-        path: "/users",
-        element: <Users />,
+        path: "/PortalUsers",
+        element: <PortalUser />,
         children: [
-          { path: "addUser", element: <Users /> },
-          { path: "editUser", element: <Users /> },
+          {
+            path: "addPortalUser",
+            element: <PortalUser />,
+          },
+          {
+            path: "editPortalUser",
+            element: <PortalUser />,
+          },
         ],
       },
+      // {
+      //   path: "/users",
+      //   element: <Users />,
+      //   children: [
+      //     { path: "addUser", element: <Users /> },
+      //     { path: "editUser", element: <Users /> },
+      //   ],
+      // },
 
       {
         path: "/address",
@@ -81,8 +107,8 @@ const router = createBrowserRouter([
         path: "/orders",
         element: <Orders />,
         children: [
-          { path: "addOrders", element: <Orders /> },
-          { path: "editOrders", element: <Orders /> },
+          { path: "addOrder", element: <Orders /> },
+          { path: "editOrder", element: <Orders /> },
         ],
       },
 

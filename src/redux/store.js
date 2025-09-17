@@ -6,6 +6,8 @@ import productReducer from "./reducers/productReducer.js";
 import addressReducer from "./reducers/addressReducer.js";
 import couponReducer from "./reducers/couponReducer.js";
 import userReducer from "./reducers/userReducer.js";
+import orderReducer from "./reducers/orderReducer.js";
+import portalUserReducer from "./reducers/portalUserReducer.js";
 
 export const store = configureStore({
   reducer: {
@@ -16,5 +18,7 @@ export const store = configureStore({
     address: addressReducer,
     coupon: couponReducer,
     user: userReducer,
+    order: orderReducer,
+    portalUser: portalUserReducer,
   },
 });

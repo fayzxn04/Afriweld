@@ -9,8 +9,12 @@ const appSlice = createSlice({
     setAppUser: (state, action) => {
       return { ...state, user: action.payload };
     },
+
+    signOut: (state) => {
+      state.user = null;
+    },
   },
 });
 
-export const { setAppUser } = appSlice.actions;
+export const { setAppUser, signOut } = appSlice.actions;
 export default appSlice.reducer;

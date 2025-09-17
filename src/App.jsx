@@ -1,4 +1,4 @@
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   AppShell,
   Avatar,
@@ -25,7 +25,7 @@ import {
 } from "react-feather";
 import { companyColor } from "./utils/utilConst";
 import Logo from "/logoBlack.png";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setProducts } from "./redux/reducers/productReducer";
 import { getAllProducts } from "./services/product";
 import { setCategories } from "./redux/reducers/categoryReducer";
@@ -33,12 +33,39 @@ import { getAllCategories } from "./services/category";
 import { setAddresses } from "./redux/reducers/addressReducer";
 import { getAllAddresses } from "./services/address";
 import { setUsers } from "./redux/reducers/userReducer";
-import { getAllUsers } from "./services/user";
+import { getAllUsers, getPortalUser } from "./services/user";
 import { useEffect } from "react";
+import { auth } from "./config/firebase";
+// import { onAuthStateChanged } from "firebase/auth";
+// import { setAppUser } from "./redux/reducers/appReducer";
 
 const App = () => {
   const location = useLocation();
   const dispatch = useDispatch();
+  // const navigate = useNavigate();
+  // const { user } = useSelector((state) => state.app);
+
+  // useEffect(() => {
+  //   const checkAuthState = async () => {
+  //     onAuthStateChanged(auth, async (user) => {
+  //       if (user) {
+  //         const uid = user.uid;
+  //         console.log("user is logged in", uid);
+  //         const userExist = await getPortalUser(uid);
+  //         if (!userExist) {
+  //           navigate("/user/login", { replace: true });
+  //         } else {
+  //           dispatch(setAppUser(userExist));
+  //         }
+  //       } else {
+  //         console.log("user is logged out");
+  //         navigate("/user/login", { replace: true });
+  //       }
+  //     });
+  //   };
+
+  //   checkAuthState();
+  // }, []);
 
   const fetchProducts = async () => {
     const data = await getAllProducts();
@@ -61,14 +88,26 @@ const App = () => {
   };
 
   useEffect(() => {
+    // if (!location.pathname.includes("/user"))
     fetchProducts();
     fetchCategories();
     fetchAddresses();
     fetchUsers();
   }, []);
 
+  // const logoutHandler = async () => {
+  //   const res = await auth.signOut();
+  //   if (res) {
+  //     navigate("/user/login", { replace: true });
+  //   }
+  // };
+
   return (
     <div className="appWrapper">
+      {/* {location.pathname === "/user/login" ||
+      location.pathname === "/user/resetPassword" ? (
+        <Outlet />
+      ) : ( */}
       <AppShell
         navbar={{ width: "240px" }}
         main={{
@@ -168,10 +207,16 @@ export default App;
 const navLinks = [
   {
     id: 1,
-    name: "Users",
-    path: "/users",
+    name: "Portal Users",
+    path: "/portalUsers",
     icon: <Users />,
   },
+  // {
+  //   id: 2,
+  //   name: "Users",
+  //   path: "/users",
+  //   icon: <Users />,
+  // },
 
   {
     id: 2,
